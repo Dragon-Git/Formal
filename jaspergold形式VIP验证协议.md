@@ -20,6 +20,8 @@
   - IIC
   - OCP
 
+具体请参考[cadence官网](https://www.cadence.com/zh_CN/home/tools/system-design-and-verification/verification-ip/formal-vip.html)
+
 ## 步骤
 
 需要提前准备好待验ip的dut
