@@ -33,11 +33,17 @@ sat
 - D:0×x 和 13×Y
 
 则有
-$3*A+2*B+C=800$
-$A+2*B+9*C+13*D=400$
-$A,B,C,D>=0$
+$$\left \{
+    \begin{array}{lcr}
+        3*A+2*B+C=800 \\
+        A+2*B+9*C+13*D=400 \\
+        A,B,C,D>=0 
+    \end{array}
+\right.
+$$
+
 目标函数为
-$Y=min(A+B+C+D)$
+$$Y=min(A+B+C+D)$$
 相应代码为：
 ```python
 from z3 import *
@@ -91,24 +97,14 @@ def sudoku_solver(puzzle:str):
             # 0< =cell value <=9
             s.add(cells[r][c]>=1, cells[r][c]<=9)
     # for all 9 rows
-    for r in cells:
-        s.add(Distinct(*r))
+    s.add(*[Distinct(*r) for r in cells])
     # for all 9 columns
-    for c in zip(*cells):
-        s.add(Distinct(*c))
+    s.add(*[Distinct(*c) for c in zip(*cells)])
     # enumerate all 9 squares
     for r in range(0, 9, 3):
         for c in range(0, 9, 3):
         # add constraints for each 3*3 square:
-            s.add(Distinct(cells[r+0][c+0],
-            cells[r+0][c+1],
-            cells[r+0][c+2],
-            cells[r+1][c+0],
-            cells[r+1][c+1],
-            cells[r+1][c+2],
-            cells[r+2][c+0],
-            cells[r+2][c+1],
-            cells[r+2][c+2]))
+            s.add(Distinct(*[cells[r+rr][c+cc] for rr in range(3) for cc in range(3)]))
 
     if s.check().__repr__() == "sat":
         m=s.model()
@@ -123,11 +119,24 @@ puzzle0="..53.....8......2..7..1.5..4....53...1..7...6..32...8..6.5....9..4....3
 puzzle1=".....6....59.....82....8....45........3........6..3.54...325..6.................."
 puzzle2=".....5.8....6.1.43..........1.5........1.6...3.......553.....61........4........."
 sudoku_solver(puzzle0)
+sudoku_solver(puzzle1)
+sudoku_solver(puzzle2)
 
 ```
+## 解魔方
+![三阶魔方](https://bkimg.cdn.bcebos.com/pic/b2de9c82d158ccbf6c81ac8b7d92ab3eb13533faeb62?x-bce-process=image/resize,m_lfit,w_536,limit_1)
+
+---
+**Solving Rubik’s cube is not a problem, finding shortest solution is**
+
+--- 
+
+假设魔方有6种颜色: white, green, blue, orange, red, yellow. 
+将魔方的6个面记为:front, up, down, left, right, back.
+
 ## 求解二阶积分的逆
 **问题** 二阶积分的表达式为:
-$y=\sum\limits^n_{i=0} i*x_i$
+$$y=\sum\limits^n_{i=0} i*x_i$$
 下面求解二阶64次积分的逆
 ```python
 from z3 import (Solver,Int,Sum)
